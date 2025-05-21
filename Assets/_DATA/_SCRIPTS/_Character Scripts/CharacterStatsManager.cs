@@ -78,6 +78,8 @@ namespace NSG
         {
             if (!character.IsOwner) return;
 
+            if (character.isDead.Value) return;
+
             staminaRegenerationTimer += Time.deltaTime;
 
             if (staminaRegenerationTimer < staminaRegenerationDelay) return;

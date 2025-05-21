@@ -62,11 +62,6 @@ namespace NSG
             playerControls.Enable();
         }
 
-        private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-        {
-            throw new System.NotImplementedException();
-        }
-
         private void Start()
         {
             DontDestroyOnLoad(gameObject);

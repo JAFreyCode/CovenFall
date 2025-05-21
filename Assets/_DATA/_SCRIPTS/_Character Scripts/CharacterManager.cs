@@ -5,6 +5,9 @@ namespace NSG
 {
     public class CharacterManager : NetworkBehaviour
     {
+        [Header("Character Status")]
+        public NetworkVariable<bool> isDead = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
         [Header("References")]
         public CharacterLocomotionManager characterLocomotionManager {  get; private set; }
         public CharacterNetworkManager characterNetworkManager { get; private set; }

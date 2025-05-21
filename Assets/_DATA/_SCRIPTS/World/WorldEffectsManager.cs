@@ -9,6 +9,10 @@ namespace NSG
         private static WorldEffectsManager Singleton;
         public static WorldEffectsManager _Singleton { get { return Singleton; } private set { Singleton = value; } }
 
+        [Header("Damage Effect")]
+        public InstantDamageEffect instantDamageEffect;
+
+        [Header("Character Effects")]
         public List<InstantCharacterEffect> instantEffects;
 
         private void Awake()

@@ -19,9 +19,6 @@ namespace NSG
 
             player.playerNetworkManager.maxHealth.Value = CalculateHealthBaseOnVigorLevel(player.playerNetworkManager.vigor.Value);
             player.playerNetworkManager.maxStamina.Value = CalculateStaminaBasedOnEnduranceLevel(player.playerNetworkManager.endurance.Value);
-
-            player.playerNetworkManager.currentHealth.Value = player.playerNetworkManager.maxHealth.Value;
-            player.playerNetworkManager.currentStamina.Value = player.playerNetworkManager.maxStamina.Value;
         }
 
         protected override void Update()

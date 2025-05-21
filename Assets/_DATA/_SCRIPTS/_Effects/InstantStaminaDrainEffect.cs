@@ -9,6 +9,8 @@ namespace NSG
 
         public override void ProcessEffect(CharacterManager character)
         {
+            if (character.isDead.Value) return;
+
             CalculateStaminaDamage(character);
         }
 

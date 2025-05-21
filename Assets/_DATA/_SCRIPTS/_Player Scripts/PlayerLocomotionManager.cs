@@ -1,6 +1,7 @@
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.TextCore.Text;
 
 namespace NSG
 {
@@ -59,6 +60,8 @@ namespace NSG
         {
             base.Update();
 
+            if (player.isDead.Value) return;
+
             UpdatePlayerNetworkAnimatorValues();
         }
 
@@ -67,6 +70,8 @@ namespace NSG
             float verticalMovement = WorldInputManager._Singleton.vertical_Input;
             float horizontalMovement = WorldInputManager._Singleton.horizontal_Input;
             float absMovement = WorldInputManager._Singleton.absMove_Input;
+
+            if (player.isDead.Value) return;
 
             HandleGroundedLocomotion(verticalMovement, horizontalMovement, absMovement);
             HandleRotation(verticalMovement, horizontalMovement);

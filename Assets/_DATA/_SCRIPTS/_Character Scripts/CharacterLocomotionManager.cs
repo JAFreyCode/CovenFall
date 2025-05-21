@@ -47,12 +47,16 @@ namespace NSG
 
         protected virtual void Update()
         {
+            if (character.isDead.Value) return;
+
             ApplyGravity();
             UpdateCharacterNetworkPosition();
         }
 
         protected virtual void FixedUpdate()
         {
+            if (character.isDead.Value) return;
+
             HandleGroundCheck();
             HandleGroundRayCheck();
         }

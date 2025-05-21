@@ -123,6 +123,9 @@ namespace NSG
             playerSFXManager = GetComponent<PlayerSFXManager>();
             playerStatsManager = GetComponent<PlayerStatsManager>();
             playerEffectsManager = GetComponent<PlayerEffectsManager>();
+
+            playerNetworkManager.currentHealth.Value = playerNetworkManager.maxHealth.Value;
+            playerNetworkManager.currentStamina.Value = playerNetworkManager.maxStamina.Value;
         }
     }
 }

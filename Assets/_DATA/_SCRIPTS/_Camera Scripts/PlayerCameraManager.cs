@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace NSG
 {
@@ -46,6 +47,8 @@ namespace NSG
         {
             if (player == null)
                 return;
+
+            if (player.isDead.Value) return;
 
             HandleFallowTarget();
             HandleCameraRotation();
