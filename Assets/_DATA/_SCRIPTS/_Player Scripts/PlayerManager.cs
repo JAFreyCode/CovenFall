@@ -73,7 +73,10 @@ namespace NSG
             // STAMINA STAT
             playerNetworkManager.endurance.OnValueChanged += playerNetworkManager.SetNewMaxStaminaValue;
             playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager._Singleton.playerUIHudManager.SetNewStaminaValue;
-            
+
+            playerNetworkManager.currentHealth.Value = playerNetworkManager.maxHealth.Value;
+            playerNetworkManager.currentStamina.Value = playerNetworkManager.maxStamina.Value;
+
         }
 
         private void AssignLocalPlayer()
@@ -123,9 +126,6 @@ namespace NSG
             playerSFXManager = GetComponent<PlayerSFXManager>();
             playerStatsManager = GetComponent<PlayerStatsManager>();
             playerEffectsManager = GetComponent<PlayerEffectsManager>();
-
-            playerNetworkManager.currentHealth.Value = playerNetworkManager.maxHealth.Value;
-            playerNetworkManager.currentStamina.Value = playerNetworkManager.maxStamina.Value;
         }
     }
 }
