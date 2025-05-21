@@ -1,5 +1,33 @@
+<<<<<<< HEAD
+# LFS track everything
+* filter=lfs diff=lfs merge=lfs -text
+
+# ❌ DO NOT LFS track these Git control files
+.gitattributes !filter !diff !merge text
+.gitignore !filter !diff !merge text
+
+# ❌ DO NOT LFS track meta/config files
+*.cs !filter !diff !merge text
+*.json !filter !diff !merge text
+*.shader !filter !diff !merge text
+*.asmdef !filter !diff !merge text
+*.uxml !filter !diff !merge text
+*.uss !filter !diff !merge text
+*.txt !filter !diff !merge text
+*.yaml !filter !diff !merge text
+*.xml !filter !diff !merge text
+
+# ❌ DO NOT LFS track Unity-generated folders
+/Library/** !filter !diff !merge text
+/Temp/** !filter !diff !merge text
+/Obj/** !filter !diff !merge text
+/Build/** !filter !diff !merge text
+/Logs/** !filter !diff !merge text
+
+=======
 *.unity filter=lfs diff=lfs merge=lfs -text
 *.fbx filter=lfs diff=lfs merge=lfs -text
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.mp3 filter=lfs diff=lfs merge=lfs -text
 *.dll filter=lfs diff=lfs merge=lfs -text
+>>>>>>> parent of 7ce73d9a (Part 1 Commit)
