@@ -73,5 +73,39 @@ namespace NSG
             WeaponItem newWeapon = Instantiate(WorldItemDataBase._Singleton.GetWeaponByID(newID));
             player.playerCombatManager.currentWeaponBeingUsed = newWeapon;
         }
+
+        // ITEM ACTIONS
+        [ServerRpc]
+        public void NotifyTheServerOfWeaponActionServerRpc(ulong clientID, int actionID, int weaponID)
+        {
+            if (IsServer)
+            {
+                NotifyTheServerOfWeaponActionClientRpc(clientID, actionID, weaponID);
+            }
+        }
+
+        [ClientRpc]
+        private void NotifyTheServerOfWeaponActionClientRpc(ulong clientID, int actionID, int weaponID)
+        {
+            // WE DO NOT PLAY THE ACTION AGAIN FOR THE CHARACTER WHO CALLED THE ACTION
+            if (clientID != NetworkManager.Singleton.LocalClientId)
+            {
+                PerformWeaponBasedAction(actionID, weaponID);
+            }
+        }
+
+        private void PerformWeaponBasedAction(int actionID, int weaponID)
+        {
+            WeaponItemAction weaponAction = WorldActionManager._Singleton.GetWeaponItemActionByID(actionID);
+
+            if (weaponAction != null)
+            {
+                weaponAction.AttemptToPerformAction(player, WorldItemDataBase._Singleton.GetWeaponByID(weaponID));
+            }
+            else
+            {
+                Debug.LogError("ACTION IS NULL, CANNOT BE PERFORMED!");
+            }
+        }
     }
 }

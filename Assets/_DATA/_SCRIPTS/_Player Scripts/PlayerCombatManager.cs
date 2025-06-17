@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Netcode;
 
 namespace NSG
 {
@@ -17,11 +18,14 @@ namespace NSG
 
         public void PerformWeaponBasedAction(WeaponItemAction weaponAction, WeaponItem weaponPerformingAction)
         {
-            // PERFORM THE ACTION
-            weaponAction.AttemptToPerformAction(player, weaponPerformingAction);
+            if (player.IsOwner)
+            {
+                // PERFORM THE ACTION
+                weaponAction.AttemptToPerformAction(player, weaponPerformingAction);
 
-            // ALSO PERFORM THE ACTION ON OTHER CLIENTS / NOTIFY THE SERVER TO RUN THIS ON OTHER CLIENTS
-
+                // ALSO PERFORM THE ACTION ON OTHER CLIENTS / NOTIFY THE SERVER TO RUN THIS ON OTHER CLIENTS
+                player.playerNetworkManager.NotifyTheServerOfWeaponActionServerRpc(NetworkManager.Singleton.LocalClientId, weaponAction.actionID, weaponPerformingAction.itemID);
+            }
         }
     }
 }

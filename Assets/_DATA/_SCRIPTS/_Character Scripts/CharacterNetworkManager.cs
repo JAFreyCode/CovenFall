@@ -87,5 +87,28 @@ namespace NSG
             character.characterAnimatorManager.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(animationID, character.characterAnimatorManager.crossFadeAnimationSmoothing);
         }
+
+        [ServerRpc]
+        public void NotifyTheServerOfAttackActionAnimationServerRpc(ulong clientID, string animationID, bool applyRootMotion)
+        {
+            if (!IsServer) return;
+
+            PlayAttackActionAnimationForAllClientsClientRpc(clientID, animationID, applyRootMotion);
+
+        }
+
+        [ClientRpc]
+        private void PlayAttackActionAnimationForAllClientsClientRpc(ulong clientID, string animationID, bool applyRootMotion)
+        {
+            if (clientID == NetworkManager.Singleton.LocalClientId) return;
+
+            PlayAttackActionAnimationForAllClients(animationID, applyRootMotion);
+        }
+
+        private void PlayAttackActionAnimationForAllClients(string animationID, bool applyRootMotion)
+        {
+            character.characterAnimatorManager.applyRootMotion = applyRootMotion;
+            character.animator.CrossFade(animationID, character.characterAnimatorManager.crossFadeAnimationSmoothing);
+        }
     }
 }

@@ -178,7 +178,7 @@ namespace NSG
 
                 // IF WE HAVE A UI WINDOW OPEN, RETURN DO NOTHING
 
-                player.playerNetworkManager.SetCharacterActionHand(rightHandBaseAction_Input);
+                player.playerNetworkManager.SetCharacterActionHand(true);
 
                 // IF WE ARE TWO HANDING THE WEAPON, USE THE TWO HANDED ACTION
 

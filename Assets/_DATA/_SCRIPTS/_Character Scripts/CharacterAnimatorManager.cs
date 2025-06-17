@@ -73,6 +73,23 @@ namespace NSG
             character.characterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(NetworkManager.Singleton.LocalClientId, targetAnimation, applyRootMotion);
         }
 
+        public virtual void PlayTargetAttackActionAnimation(
+            string targetAnimation,
+            bool isPerformingAction,
+            bool applyRootMotion = true,
+            bool canRotate = false,
+            bool canMove = false
+            )
+        {
+            character.characterAnimatorManager.applyRootMotion = applyRootMotion;
+            character.animator.CrossFade(targetAnimation, crossFadeAnimationSmoothing);
+            character.isPerformingAction = isPerformingAction;
+            character.canMove = canMove;
+            character.canRotate = canRotate;
+
+            character.characterNetworkManager.NotifyTheServerOfAttackActionAnimationServerRpc(NetworkManager.Singleton.LocalClientId, targetAnimation, applyRootMotion);
+        }
+
         protected virtual void GetReferences()
         {
             character = GetComponent<CharacterManager>();
