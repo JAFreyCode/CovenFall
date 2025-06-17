@@ -121,7 +121,7 @@ namespace NSG
 
         private void HandleJumpingMovement()
         {
-            if (!player.isJumping) return;
+            if (!player.playerNetworkManager.isJumping.Value) return;
 
             player.characterController.Move(jumpDirection * currentMovementSpeed * Time.deltaTime);
         }
@@ -205,13 +205,13 @@ namespace NSG
 
             if (player.playerNetworkManager.currentStamina.Value <= 0) return;
 
-            if (player.isJumping) return;
+            if (player.characterNetworkManager.isJumping.Value) return;
 
             if (!player.isGrounded) return;
 
             player.playerAnimatorManager.PlayTargetActionAnimation("Main_Jump_Start", false);
 
-            player.isJumping = true;
+            player.characterNetworkManager.isJumping.Value = true;
 
             ApplyStaminaEffect(jumpStaminaCost);
 

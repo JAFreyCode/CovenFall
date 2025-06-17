@@ -12,7 +12,7 @@ namespace NSG
 
             if (!character.IsOwner) return;
 
-            character.isJumping = false;
+            character.characterNetworkManager.isJumping.Value = false;
         }
     }
 }

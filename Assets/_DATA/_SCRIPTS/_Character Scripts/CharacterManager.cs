@@ -17,6 +17,7 @@ namespace NSG
         public CharacterSFXManager characterSFXManager { get; private set; }
         public CharacterStatsManager characterStatsManager { get; private set; }
         public CharacterEffectsManager characterEffectsManager { get; private set; }
+        public CharacterCombatManager characterCombatManager { get; private set; }
 
         [Header("Component References")]
         public CharacterController characterController { get; private set; }
@@ -27,7 +28,6 @@ namespace NSG
         public bool canMove = true;
         public bool canRotate = true;
         public bool isGrounded = false;
-        public bool isJumping = false;
 
         protected virtual void Awake()
         {
@@ -39,6 +39,7 @@ namespace NSG
             characterSFXManager = GetComponent<CharacterSFXManager>();
             characterStatsManager = GetComponent<CharacterStatsManager>();
             characterEffectsManager = GetComponent<CharacterEffectsManager>();
+            characterCombatManager = GetComponent<CharacterCombatManager>();
         }
 
         protected virtual void Start()

@@ -28,6 +28,10 @@ namespace NSG
         public float cameraHorizontal_Input { get; private set; }
         public float cameraVertical_Input { get; private set; }
 
+        [Header("Player Input Actions")]
+        public bool rightHandBaseAction_Input { get; private set; }
+        public bool rightHandEnchancedAction_Input { get; private set; }
+
         PlayerControls playerControls;
 
         private void Awake()
@@ -56,6 +60,9 @@ namespace NSG
             // JUMP
             playerControls.PlayerMovement.Jump.performed += i => jump_Input = true;
 
+            // ACTIONS
+            playerControls.PlayerInputActions.rightHandBaseAction.performed += i => rightHandBaseAction_Input = true;
+
             // CAMERA MOVEMENT CONTROLS
             playerControls.CameraMovement.Movement.performed += i => camera_Input = i.ReadValue<Vector2>(); // CAMERA MOVEMENT
 
@@ -69,6 +76,8 @@ namespace NSG
             SceneManager.activeSceneChanged += OnSceneChange;
 
             Singleton.enabled = false;
+
+            if (playerControls != null) { playerControls.Disable(); }
         }
 
         private void Update()
@@ -103,6 +112,7 @@ namespace NSG
             HandleCameraMovementInput();
             HandleDodgeInput();
             HandleJumpInput();
+            HandleBaseActionInput();
         }
 
         private void HandleMovementInput()
@@ -160,11 +170,28 @@ namespace NSG
             }
         }
 
+        private void HandleBaseActionInput()
+        {
+            if (rightHandBaseAction_Input)
+            {
+                rightHandBaseAction_Input = false;
+
+                // IF WE HAVE A UI WINDOW OPEN, RETURN DO NOTHING
+
+                player.playerNetworkManager.SetCharacterActionHand(rightHandBaseAction_Input);
+
+                // IF WE ARE TWO HANDING THE WEAPON, USE THE TWO HANDED ACTION
+
+                player.playerCombatManager.PerformWeaponBasedAction(player.playerInventoryManager.currentRightHandWeapon.oh_baseAction, player.playerInventoryManager.currentRightHandWeapon);
+            }
+        }
+
         private void OnSceneChange(Scene oldScene, Scene newScene)
         {
             if (newScene.buildIndex != NSGUtils.GetWorldSceneIndex(true)) { Singleton.enabled = false; return; }
 
             Singleton.enabled = true;
+            if (playerControls != null) { playerControls.Enable(); }
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }

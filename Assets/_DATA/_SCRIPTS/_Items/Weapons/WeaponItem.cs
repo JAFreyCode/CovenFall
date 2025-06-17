@@ -49,7 +49,10 @@ namespace NSG
         // LIGHT ATTACK STAMINA COST MODIFIER
         // HEAVY ATTACK STAMINA COST MODIFIER
 
-        // ITEM BASED ACTIONS
+        [Header("Actions")]
+        public WeaponItemAction oh_baseAction;
+        public WeaponItemAction oh_enchancedAction;
+        public WeaponItemAction oh_chargedAction;
 
         // CURSES / ENCHANTATIONS
 

@@ -19,6 +19,7 @@ namespace NSG
         public PlayerEffectsManager playerEffectsManager { get; private set; }
         public PlayerInventoryManager playerInventoryManager { get; private set; }
         public PlayerEquipmentManager playerEquipmentManager { get; private set; }
+        public PlayerCombatManager playerCombatManager { get; private set; }
 
         protected override void Awake()
         {
@@ -32,6 +33,7 @@ namespace NSG
             playerEffectsManager = GetComponent<PlayerEffectsManager>();
             playerInventoryManager = GetComponent<PlayerInventoryManager>();
             playerEquipmentManager = GetComponent<PlayerEquipmentManager>();
+            playerCombatManager = GetComponent<PlayerCombatManager>();
         }
 
         protected override void Start()
@@ -93,10 +95,19 @@ namespace NSG
                 playerNetworkManager.currentStamina.Value = playerNetworkManager.maxStamina.Value;
             }
 
+            // NETWORK DEATH STATE
             playerNetworkManager.currentHealth.OnValueChanged += playerNetworkManager.CheckHealth;
 
+            // EQUIPMENT NETWORK VARIABLES
             playerNetworkManager.currentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
             playerNetworkManager.currentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
+            playerNetworkManager.currentWeaponBeingUsed.OnValueChanged += playerNetworkManager.OnCurrentWeaponBeingUsedIDChange;
+
+            // THIS DOESNT RUN IF WE ARE THE HOST
+            if (IsOwner && !IsServer)
+            {
+                LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager._Singleton.currentCharacterData);
+            }
         }
 
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)

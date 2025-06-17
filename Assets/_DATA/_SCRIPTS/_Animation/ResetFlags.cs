@@ -10,13 +10,14 @@ namespace NSG
         {
             if (character == null) { character = animator.GetComponent<CharacterManager>(); }
 
-            if (!character.IsOwner) return;
-
             character.isPerformingAction = false;
             character.characterAnimatorManager.applyRootMotion = false;
             character.canMove = true;
             character.canRotate = true;
-            character.isJumping = false;
+
+            if (!character.IsOwner) return;
+
+            character.characterNetworkManager.isJumping.Value = false;
         }
     }
 }
