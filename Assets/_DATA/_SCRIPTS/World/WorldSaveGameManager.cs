@@ -197,6 +197,9 @@ namespace NSG
 
         private void NewGame()
         {
+            player.playerNetworkManager.vigor.Value = 10;
+            player.playerNetworkManager.endurance.Value = 10;
+
             SaveGame();
             StartCoroutine(LoadWorldScene());
         }

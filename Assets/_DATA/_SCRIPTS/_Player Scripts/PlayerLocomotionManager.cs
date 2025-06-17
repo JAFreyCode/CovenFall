@@ -1,7 +1,4 @@
-using System.Globalization;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.TextCore.Text;
 
 namespace NSG
 {
@@ -222,9 +219,15 @@ namespace NSG
             jumpDirection += PlayerCameraManager._Singleton.cameraObject.transform.right * WorldInputManager._Singleton.horizontal_Input;
             jumpDirection.y = 0;
 
-            if (jumpDirection == Vector3.zero) return;
-
-            jumpDirection *= currentJumpDistance;
+            if (jumpDirection.magnitude > 0.1f)
+            {
+                jumpDirection.Normalize();
+                jumpDirection *= currentJumpDistance;
+            }
+            else
+            {
+                jumpDirection = Vector3.zero;
+            }
         }
 
         public void ApplyJumpingVelocity()

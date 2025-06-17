@@ -14,4 +14,12 @@ namespace NSG
         CharacterSlot_10,
         NO_SLOT
     }
+
+    public enum WeaponModelSlot
+    {
+        RightHand,
+        LeftHand,
+        // Back
+        // Right Hip
+    }
 }

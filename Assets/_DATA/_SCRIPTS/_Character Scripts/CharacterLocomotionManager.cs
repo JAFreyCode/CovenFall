@@ -33,16 +33,15 @@ namespace NSG
 
         protected virtual void Awake()
         {
-            // Initialize ray directions (forward, right, back, left)
-            ledgeRayDirections[0] = Vector3.forward;
-            ledgeRayDirections[1] = Vector3.right;
-            ledgeRayDirections[2] = Vector3.back;
-            ledgeRayDirections[3] = Vector3.left;
+            GetReferences();
         }
 
         protected virtual void Start()
         {
-            GetReferences();
+            ledgeRayDirections[0] = Vector3.forward;
+            ledgeRayDirections[1] = Vector3.right;
+            ledgeRayDirections[2] = Vector3.back;
+            ledgeRayDirections[3] = Vector3.left;
         }
 
         protected virtual void Update()
@@ -78,7 +77,6 @@ namespace NSG
             Vector3 ledgePullDirection = Vector3.zero;
             float closestDistance = float.MaxValue;
 
-            // Cast rays in all four directions
             for (int i = 0; i < 4; i++)
             {
                 Vector3 rayDirection = transform.TransformDirection(ledgeRayDirections[i]);
@@ -86,7 +84,6 @@ namespace NSG
 
                 if (ledgeHitsFound[i])
                 {
-                    // Check if the hit surface is steep enough to be a ledge
                     float angle = Vector3.Angle(ledgeHits[i].normal, Vector3.up);
                     if (angle > ledgeAngleThreshold)
                     {
@@ -95,42 +92,34 @@ namespace NSG
                         if (distance < closestDistance)
                         {
                             closestDistance = distance;
-                            ledgePullDirection = -rayDirection; // Pull away from the ledge
+                            ledgePullDirection = -rayDirection;
                         }
                     }
                 }
 
-                // Draw debug rays
                 Debug.DrawRay(origin, rayDirection * ledgeCheckDistance, ledgeHitsFound[i] ? Color.green : Color.red);
             }
 
-            // Apply ledge forces if a ledge was found
             if (foundLedge)
             {
-                // Check if player is moving
                 bool isMoving = Mathf.Abs(character.characterController.velocity.x) > 0.1f || 
                                Mathf.Abs(character.characterController.velocity.z) > 0.1f;
 
                 if (!isMoving)
                 {
-                    // Calculate target velocity
                     Vector3 targetVelocity = ledgePullDirection * ledgePullForce;
-                    
-                    // Smoothly interpolate current velocity to target velocity
+
                     ledgeVelocity = Vector3.Lerp(ledgeVelocity, targetVelocity, ledgeSmoothingFactor);
-                    
-                    // Apply the movement using CharacterController
+
                     character.characterController.Move(ledgeVelocity * Time.deltaTime);
                 }
                 else
                 {
-                    // Reset ledge velocity when moving
                     ledgeVelocity = Vector3.zero;
                 }
             }
             else
             {
-                // Reset ledge velocity when no ledge is found
                 ledgeVelocity = Vector3.zero;
             }
         }
@@ -157,8 +146,6 @@ namespace NSG
             if (character.isGrounded)
             {
                 groundDistance = 0;
-
-                if (yVelocity.y > 0) return;
 
                 inAirTimer = 0;
                 fallingVelocityHasBeenSet = false;

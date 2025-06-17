@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,6 +6,10 @@ namespace NSG
 {
     public class PlayerManager : CharacterManager
     {
+        [Header("DEBUG")]
+        [SerializeField] bool switchRightWeapon = false;
+        [SerializeField] bool switchLeftWeapon = false;
+
         [Header("References")]
         public PlayerLocomotionManager playerLocomotionManager {  get; private set; }
         public PlayerNetworkManager playerNetworkManager { get; private set; }
@@ -12,12 +17,21 @@ namespace NSG
         public PlayerSFXManager playerSFXManager { get; private set; }
         public PlayerStatsManager playerStatsManager { get; private set; }
         public PlayerEffectsManager playerEffectsManager { get; private set; }
+        public PlayerInventoryManager playerInventoryManager { get; private set; }
+        public PlayerEquipmentManager playerEquipmentManager { get; private set; }
 
         protected override void Awake()
         {
             base.Awake();
 
-            GetReferences();
+            playerLocomotionManager = GetComponent<PlayerLocomotionManager>();
+            playerNetworkManager = GetComponent<PlayerNetworkManager>();
+            playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
+            playerSFXManager = GetComponent<PlayerSFXManager>();
+            playerStatsManager = GetComponent<PlayerStatsManager>();
+            playerEffectsManager = GetComponent<PlayerEffectsManager>();
+            playerInventoryManager = GetComponent<PlayerInventoryManager>();
+            playerEquipmentManager = GetComponent<PlayerEquipmentManager>();
         }
 
         protected override void Start()
@@ -36,6 +50,8 @@ namespace NSG
             playerLocomotionManager.HandleAllLocomotion();
 
             playerStatsManager.RegenerateStamina();
+
+            Debug();
         }
 
         protected override void FixedUpdate()
@@ -61,22 +77,36 @@ namespace NSG
         {
             base.OnNetworkSpawn();
 
-            if (!IsOwner)
-                return;
+            if (IsOwner)
+            {
+                AssignLocalPlayer();
 
-            AssignLocalPlayer();
+                // HEALTH STAT
+                playerNetworkManager.vigor.OnValueChanged += playerNetworkManager.SetNewMaxHealthValue;
+                playerNetworkManager.currentHealth.OnValueChanged += PlayerUIManager._Singleton.playerUIHudManager.SetNewHealthValue;
 
-            // HEALTH STAT
-            playerNetworkManager.vigor.OnValueChanged += playerNetworkManager.SetNewMaxHealthValue;
-            playerNetworkManager.currentHealth.OnValueChanged += PlayerUIManager._Singleton.playerUIHudManager.SetNewHealthValue;
+                // STAMINA STAT
+                playerNetworkManager.endurance.OnValueChanged += playerNetworkManager.SetNewMaxStaminaValue;
+                playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager._Singleton.playerUIHudManager.SetNewStaminaValue;
 
-            // STAMINA STAT
-            playerNetworkManager.endurance.OnValueChanged += playerNetworkManager.SetNewMaxStaminaValue;
-            playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager._Singleton.playerUIHudManager.SetNewStaminaValue;
+                playerNetworkManager.currentHealth.Value = playerNetworkManager.maxHealth.Value;
+                playerNetworkManager.currentStamina.Value = playerNetworkManager.maxStamina.Value;
+            }
 
-            playerNetworkManager.currentHealth.Value = playerNetworkManager.maxHealth.Value;
-            playerNetworkManager.currentStamina.Value = playerNetworkManager.maxStamina.Value;
+            playerNetworkManager.currentHealth.OnValueChanged += playerNetworkManager.CheckHealth;
 
+            playerNetworkManager.currentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
+            playerNetworkManager.currentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
+        }
+
+        public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
+        {
+            if (IsOwner)
+            {
+                PlayerUIManager._Singleton.playerUIPopUpManager.SendYouHaveBeenCursedPopUp();
+            }
+
+            return base.ProcessDeathEvent(manuallySelectDeathAnimation);
         }
 
         private void AssignLocalPlayer()
@@ -91,6 +121,8 @@ namespace NSG
         {
             currentCharacterData.sceneIndex = 1;
             currentCharacterData.characterName = playerNetworkManager.characterName.Value.ToString();
+            currentCharacterData.vigorLevel = playerNetworkManager.vigor.Value;
+            currentCharacterData.currentHealth = playerNetworkManager.currentHealth.Value;
             currentCharacterData.enduranceLevel = playerNetworkManager.endurance.Value;
             currentCharacterData.currentStamina = playerNetworkManager.currentStamina.Value;
             currentCharacterData.worldPositionX = transform.position.x;
@@ -116,16 +148,35 @@ namespace NSG
             PlayerUIManager._Singleton.playerUIHudManager.SetMaxStaminaValue(playerNetworkManager.maxStamina.Value);
         }
 
-        protected override void GetReferences()
+        public override void RevivePlayer()
         {
-            base.GetReferences();
+            base.RevivePlayer();
 
-            playerLocomotionManager = GetComponent<PlayerLocomotionManager>();
-            playerNetworkManager = GetComponent<PlayerNetworkManager>();
-            playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
-            playerSFXManager = GetComponent<PlayerSFXManager>();
-            playerStatsManager = GetComponent<PlayerStatsManager>();
-            playerEffectsManager = GetComponent<PlayerEffectsManager>();
+            if (IsOwner)
+            {
+                playerNetworkManager.currentHealth.Value = playerNetworkManager.maxHealth.Value;
+                playerNetworkManager.currentStamina.Value = playerNetworkManager.maxStamina.Value;
+                // RESTORE FOCUS POINTS
+
+                // REBIRTH EFFECTS
+
+                playerAnimatorManager.PlayTargetActionAnimation("Empty", false);
+            }
+        }
+
+        private void Debug()
+        {
+            if (switchRightWeapon)
+            {
+                switchRightWeapon = false;
+                playerEquipmentManager.SwitchRightWeapon();
+            }
+
+            if (switchLeftWeapon)
+            {
+                switchLeftWeapon = false;
+                playerEquipmentManager.SwitchLeftWeapon();
+            }
         }
     }
 }

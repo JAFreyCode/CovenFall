@@ -11,6 +11,7 @@ namespace NSG
 
         [Header("References")]
         public PlayerUIHudManager playerUIHudManager {  get; private set; }
+        public PlayerUIPopUpManager playerUIPopUpManager { get; private set; }
 
         [Header("NETWORK JOIN")]
         [SerializeField] bool startGameAsClient;
@@ -52,6 +53,7 @@ namespace NSG
         private void GetReferences()
         {
             playerUIHudManager = GetComponentInChildren<PlayerUIHudManager>();
+            playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>();
         }
     }
 }

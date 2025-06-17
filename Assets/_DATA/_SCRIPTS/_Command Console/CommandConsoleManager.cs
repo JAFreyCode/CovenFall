@@ -5,6 +5,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.GPUSort;
 
 namespace NSG
 {
@@ -103,10 +104,18 @@ namespace NSG
             commandActions.Add("walkingspeed", ("Usage: $walkingspeed [value] - Updates the walking speed of the player.", args => UpdatePlayerSpeed("Walking", args, 1.65f)));
             commandActions.Add("runningspeed", ("Usage: $runningspeed [value] - Updates the running speed of the player.", args => UpdatePlayerSpeed("Running", args, 5f)));
             commandActions.Add("sprintingspeed", ("Usage: $sprintingspeed [value] - Updates the sprinting speed of the player.", args => UpdatePlayerSpeed("Sprinting", args, 7f)));
+            commandActions.Add("idleJumpDistance", ("Usafe: $idleJumpDistance [value] - Updates the idle jump distance of the player", args => ChangePlayerJumpDistance("Idle", args, 0f)));
+            commandActions.Add("walkingJumpDistance", ("Usafe: $walkingJumpDistance [value] - Updates the walking jump distance of the player", args => ChangePlayerJumpDistance("Walking", args, 0.5f)));
+            commandActions.Add("runningJumpDistance", ("Usafe: $runningJumpDistance [value] - Updates the running jump distance of the player", args => ChangePlayerJumpDistance("Running", args, 1f)));
+            commandActions.Add("sprintingJumpDistance", ("Usafe: $sprintingJumpDistance [value] - Updates the sprinting jump distance of the player", args => ChangePlayerJumpDistance("Sprinting", args, 1f)));
+            commandActions.Add("idleJumpHeight", ("Usafe: $idleJumpHeight [value] - Updates the idle jump height of the player", args => ChangePlayerJumpHeight("Idle", args, 1f)));
+            commandActions.Add("walkingJumpHeight", ("Usafe: $walkingJumpHeight [value] - Updates the walking jump height of the player", args => ChangePlayerJumpHeight("Walking", args, 0.5f)));
+            commandActions.Add("runningJumpHeight", ("Usafe: $runningJumpHeight [value] - Updates the running jump height of the player", args => ChangePlayerJumpHeight("Running", args, 1f)));
+            commandActions.Add("sprintingJumpHeight", ("Usafe: $sprintingJumpHeight [value] - Updates the sprinting jump height of the player", args => ChangePlayerJumpHeight("Sprinting", args, 1f)));
             commandActions.Add("teleport", ("Usage: $teleport [X value] [Y value] [Z value] - Teleports the player to the specified location", args => TeleportPlayer(args, player.transform.position.ToString())));
+            commandActions.Add("vigorLevel", ("Usage: $vigorLevel [value] - Changes the players vigor level.", args => ChangeVigorLevel(args, player.playerNetworkManager.vigor.Value)));
             commandActions.Add("endurancelevel", ("Usage: $endurancelevel [value] - Changes the players endurance level.", args => ChangeEnduranceLevel(args, player.playerNetworkManager.endurance.Value)));
-            commandActions.Add("whatislove?", ("Do you know what love is.", _ => Application.OpenURL("https://www.youtube.com/watch?v=G8RY_XOqJf4")));
-            commandActions.Add("whoisrick?", ("Rickrolls you, of course.", _ => Application.OpenURL("https://www.youtube.com/watch?v=dQw4w9WgXcQ")));
+            commandActions.Add("revive", ("Revives the player.", _ => player.RevivePlayer()));
         }
 
         private void CreateConsoleResponse(string response)
@@ -266,6 +275,23 @@ namespace NSG
             }
         }
 
+        private void ChangeVigorLevel(string args, int defaultLevel)
+        {
+            if (int.TryParse(args, out int level))
+            {
+                player.playerNetworkManager.vigor.Value = level;
+                player.playerNetworkManager.maxHealth.Value = player.playerStatsManager.CalculateHealthBaseOnVigorLevel(player.playerNetworkManager.vigor.Value);
+                PlayerUIManager._Singleton.playerUIHudManager.SetMaxHealthValue(player.playerNetworkManager.maxHealth.Value);
+                player.playerNetworkManager.currentHealth.Value = player.playerNetworkManager.maxHealth.Value;
+
+                CreateConsoleResponse($"Default Level: {defaultLevel}. Updated Level to {level}.");
+            }
+            else
+            {
+                CreateConsoleResponse("Invalid Level Value.");
+            }
+        }
+
         private void ChangeEnduranceLevel(string args, int defaultLevel)
         {
             if (int.TryParse(args, out int level))
@@ -280,6 +306,60 @@ namespace NSG
             else
             {
                 CreateConsoleResponse("Invalid Level Value.");
+            }
+        }
+
+        private void ChangePlayerJumpDistance(string type, string args, float defaultJumpDistance)
+        {
+            if (float.TryParse(args, out float jumpDistance))
+            {
+                switch (type)
+                {
+                    case "Idle":
+                        player.playerLocomotionManager.idleJumpDistance = jumpDistance;
+                        break;
+                    case "Walking":
+                        player.playerLocomotionManager.walkingJumpDistance = jumpDistance;
+                        break;
+                    case "Running":
+                        player.playerLocomotionManager.runningJumpDistance = jumpDistance;
+                        break;
+                    case "Sprinting":
+                        player.playerLocomotionManager.sprintingJumpDistance = jumpDistance;
+                        break;
+                }
+                CreateConsoleResponse($"Default {type} Jump Distance: {defaultJumpDistance}. Updated {type} Jump Distance to: {jumpDistance}.");
+            }
+            else
+            {
+                CreateConsoleResponse("Invalid Jump Distance Value.");
+            }
+        }
+
+        private void ChangePlayerJumpHeight(string type, string args, float defaultJumpHeight)
+        {
+            if (float.TryParse(args, out float jumpHeight))
+            {
+                switch (type)
+                {
+                    case "Idle":
+                        player.playerLocomotionManager.idleJumpHeight = jumpHeight;
+                        break;
+                    case "Walking":
+                        player.playerLocomotionManager.walkingJumpHeight = jumpHeight;
+                        break;
+                    case "Running":
+                        player.playerLocomotionManager.runningJumpHeight = jumpHeight;
+                        break;
+                    case "Sprinting":
+                        player.playerLocomotionManager.sprintingJumpHeight = jumpHeight;
+                        break;
+                }
+                CreateConsoleResponse($"Default {type} Jump Height: {defaultJumpHeight}. Updated {type} Jump Height to: {jumpHeight}.");
+            }
+            else
+            {
+                CreateConsoleResponse("Invalid Jump Height Value.");
             }
         }
         #endregion
