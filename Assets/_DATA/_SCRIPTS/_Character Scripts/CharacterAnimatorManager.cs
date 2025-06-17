@@ -73,7 +73,7 @@ namespace NSG
             character.characterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(NetworkManager.Singleton.LocalClientId, targetAnimation, applyRootMotion);
         }
 
-        public virtual void PlayTargetAttackActionAnimation(
+        public virtual void PlayTargetAttackActionAnimation(AttackType attackType,
             string targetAnimation,
             bool isPerformingAction,
             bool applyRootMotion = true,
@@ -81,6 +81,7 @@ namespace NSG
             bool canMove = false
             )
         {
+            character.characterCombatManager.currentAttackType = attackType;
             character.characterAnimatorManager.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, crossFadeAnimationSmoothing);
             character.isPerformingAction = isPerformingAction;

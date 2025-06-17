@@ -219,5 +219,32 @@ namespace NSG
                 SwitchLeftWeapon();
             }
         }
+
+        // DAMAGE COLLIDERS
+        public void OpenDamageCollider()
+        {
+            if (player.playerNetworkManager.isUsingRightHand.Value)
+            {
+                rightHandWeaponManager.meleeDamageCollider.EnableDamageCollider();
+            }
+            else if (player.playerNetworkManager.isUsingLeftHand.Value)
+            {
+                leftHandWeaponManager.meleeDamageCollider.EnableDamageCollider();
+            }
+
+            // PLAY SWING / WOOSH SFX
+        }
+
+        public void CloseDamageCollider()
+        {
+            if (player.playerNetworkManager.isUsingRightHand.Value)
+            {
+                rightHandWeaponManager.meleeDamageCollider.DisableDamageCollider();
+            }
+            else if (player.playerNetworkManager.isUsingLeftHand.Value)
+            {
+                leftHandWeaponManager.meleeDamageCollider.DisableDamageCollider();
+            }
+        }
     }
 }

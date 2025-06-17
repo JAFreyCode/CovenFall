@@ -27,5 +27,28 @@ namespace NSG
                 player.playerNetworkManager.NotifyTheServerOfWeaponActionServerRpc(NetworkManager.Singleton.LocalClientId, weaponAction.actionID, weaponPerformingAction.itemID);
             }
         }
+
+        public virtual void DrainStaminaBasedOnAttack()
+        {
+            if (!player.IsOwner)
+                return;
+
+            if (currentWeaponBeingUsed == null)
+                return;
+
+            float staminaDeducted = 0;
+
+            switch (currentAttackType)
+            {
+                case AttackType.BaseAttack01:
+                    staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.baseAttackStaminaMultiplier;
+                    break;
+                default:
+                    break;
+            }
+
+            player.playerNetworkManager.currentStamina.Value -= Mathf.RoundToInt(staminaDeducted);
+            player.playerStatsManager.staminaRegenerationTimer = 0;
+        }
     }
 }

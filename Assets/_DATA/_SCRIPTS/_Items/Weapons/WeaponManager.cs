@@ -4,7 +4,7 @@ namespace NSG
 {
     public class WeaponManager : MonoBehaviour
     {
-        [SerializeField] MeleeWeaponDamageCollider meleeDamageCollider;
+        public MeleeWeaponDamageCollider meleeDamageCollider;
 
         private void Awake()
         {
@@ -26,6 +26,8 @@ namespace NSG
             meleeDamageCollider.holyMagicDamage = weapon.holyMagicDamage;
             meleeDamageCollider.demonMagicDamage = weapon.demonMagicDamage;
             meleeDamageCollider.arcaneMagicDamage = weapon.arcaneMagicDamage;
+
+            meleeDamageCollider.base_Attack_01_Modifier = weapon.base_Attack_01_Modifier;
         }
     }
 }

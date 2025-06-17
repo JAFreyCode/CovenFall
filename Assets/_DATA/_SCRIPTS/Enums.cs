@@ -22,4 +22,9 @@ namespace NSG
         // Back
         // Right Hip
     }
+
+    public enum AttackType
+    {
+        BaseAttack01,
+    }
 }

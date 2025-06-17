@@ -38,13 +38,14 @@ namespace NSG
         public float poise = 10;
         // OFFSENSIVE POISE BONUS
 
-        // WEAPON MODIFIERS
-        // LIGHT ATTACK MODIFIER
+        [Header("Attack Modifiers")]
+        public float base_Attack_01_Modifier = 1;
         // HEAVY ATTACK MODIFIER
         // CRITICAL DAMAGE MODIFIER
 
-        [Header("Stamina Cost")]
+        [Header("Stamina Cost Modifiers")]
         public int baseStaminaCost = 20;
+        public float baseAttackStaminaMultiplier = 1;
         // RUNNING ATTACK STAMINA COST MODIFIER
         // LIGHT ATTACK STAMINA COST MODIFIER
         // HEAVY ATTACK STAMINA COST MODIFIER

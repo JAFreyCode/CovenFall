@@ -30,7 +30,7 @@ namespace NSG
         {
             if (playerPerformingAction.playerNetworkManager.isUsingRightHand.Value)
             {
-                playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(base_Attack_01, true);
+                playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.BaseAttack01, base_Attack_01, true);
                 return;
             }
 

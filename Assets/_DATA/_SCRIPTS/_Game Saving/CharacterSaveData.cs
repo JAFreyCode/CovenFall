@@ -12,8 +12,8 @@ namespace NSG
         public string characterName = "Character";
 
         [Header("Player Stats")]
-        public int vigorLevel = 10;
-        public int enduranceLevel = 10;
+        public int vigorLevel;
+        public int enduranceLevel;
 
         [Header("Current Player Stats")]
         public float currentHealth;
