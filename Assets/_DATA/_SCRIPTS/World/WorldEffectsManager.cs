@@ -9,6 +9,9 @@ namespace NSG
         private static WorldEffectsManager Singleton;
         public static WorldEffectsManager _Singleton { get { return Singleton; } private set { Singleton = value; } }
 
+        [Header("VFX")]
+        public List<GameObject> bloodSplatterVFX = new List<GameObject>();
+
         [Header("Damage Effect")]
         public InstantDamageEffect instantDamageEffect;
 

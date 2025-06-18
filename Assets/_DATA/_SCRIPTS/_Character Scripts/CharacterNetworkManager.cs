@@ -117,7 +117,7 @@ namespace NSG
 
         // ATTACK DAMAGE SERVER NOTIFY
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         public void NotifyTheServerOfCharacterDamageServerRpc(
             ulong damagedCharacterID,
             ulong characterCausingDamageID,

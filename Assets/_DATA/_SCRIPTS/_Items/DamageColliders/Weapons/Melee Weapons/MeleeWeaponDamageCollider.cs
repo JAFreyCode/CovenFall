@@ -24,7 +24,9 @@ namespace NSG
 
         protected override void OnTriggerEnter(Collider other)
         {
-            CharacterManager damageTarget = other.GetComponent<CharacterManager>();
+            CharacterManager damageTarget = other.GetComponentInParent<CharacterManager>();
+
+            Debug.Log(damageTarget);
 
             if (damageTarget == characterCausingDamage)
                 return;
@@ -35,8 +37,6 @@ namespace NSG
             if (damageTarget != null)
             {
                 contactPoint = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
-
-
 
                 DamageTarget(damageTarget);
             }

@@ -1,5 +1,5 @@
-using System.Security.Cryptography;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace NSG
 {
@@ -24,6 +24,22 @@ namespace NSG
         public virtual void GetReferences()
         {
             character = GetComponent<CharacterManager>();
+        }
+
+        public void PlayBloodSplatterVFX(Vector3 contactPoint)
+        {
+            if (WorldEffectsManager._Singleton.bloodSplatterVFX.Count != 0)
+            {
+                GameObject bloodSplatter = Instantiate(SelectRandomVFXFromArray(WorldEffectsManager._Singleton.bloodSplatterVFX), contactPoint, Quaternion.identity);
+            }
+        }
+
+        public GameObject SelectRandomVFXFromArray(List<GameObject> vfx)
+        {
+            int arraySize = vfx.Count;
+            int randomIndex = Random.Range(0, arraySize - 1);
+
+            return WorldEffectsManager._Singleton.bloodSplatterVFX[randomIndex];
         }
     }
 }

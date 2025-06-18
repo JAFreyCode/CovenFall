@@ -55,7 +55,7 @@ namespace NSG
             // PLAY A DAMAGE ANIMATION
             // CHECK FOR BUILD UPS (POISON, BLEED ECT)
             // PLAY DAMAGE SFX
-            // PLAY DAMAGE VFX
+            PlayDamageVFX(character);
 
             // IF CHARACTER IS A.I, CHECK FOR NEW TARGET IF CHARACTER CAUSING DAMAGE IS PRESENT
         }
@@ -80,6 +80,14 @@ namespace NSG
             character.characterNetworkManager.currentHealth.Value -= finalDamageDealt;
 
             // CALCULATE POISE DAMAGE TO DETERMINE IF THE CHARACTER WILL BE STUNNED
+        }
+
+        private void PlayDamageVFX(CharacterManager character)
+        {
+            // IF WE HAVE FIRE DAMAGE, PLAY FIRE PARTICLES ECT
+            // LIGHTNING DAMAGE, LIGHTNING PARTICLE EFFECTS ECT
+
+            character.characterEffectsManager.PlayBloodSplatterVFX(contactPoint);
         }
     }
 }

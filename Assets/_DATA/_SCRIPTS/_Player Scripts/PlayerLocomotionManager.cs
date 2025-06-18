@@ -77,6 +77,8 @@ namespace NSG
 
         private void HandleGroundedLocomotion(float verticalMovement, float horizontalMovement, float absMovement)
         {
+            player.animator.SetFloat("Movement", WorldInputManager._Singleton.absMove_Input);
+
             if (player.isPerformingAction) return;
 
             if (!player.isGrounded) return;
@@ -209,7 +211,22 @@ namespace NSG
 
             if (!player.isGrounded) return;
 
-            player.playerAnimatorManager.PlayTargetActionAnimation("Main_Jump_Start", false);
+            if (currentMovementSpeed == 0)
+            {
+                player.playerAnimatorManager.PlayTargetActionAnimation("Jump_Idle_Start", false);
+            }
+            else if (currentMovementSpeed == walkingSpeed)
+            {
+                player.playerAnimatorManager.PlayTargetActionAnimation("Jump_Walking_Start", false);
+            }
+            else if (currentMovementSpeed == runningSpeed)
+            {
+                player.playerAnimatorManager.PlayTargetActionAnimation("Jump_Running_Start", false);
+            }
+            else if (currentMovementSpeed == sprintingSpeed)
+            {
+                player.playerAnimatorManager.PlayTargetActionAnimation("Jump_Sprinting_Start", false);
+            }
 
             player.characterNetworkManager.isJumping.Value = true;
 

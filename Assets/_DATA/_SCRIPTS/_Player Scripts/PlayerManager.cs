@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Netcode;
 using UnityEngine.SceneManagement;
 
 namespace NSG
@@ -79,6 +80,8 @@ namespace NSG
         {
             base.OnNetworkSpawn();
 
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
+
             if (IsOwner)
             {
                 AssignLocalPlayer();
@@ -107,6 +110,24 @@ namespace NSG
             if (IsOwner && !IsServer)
             {
                 LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager._Singleton.currentCharacterData);
+            }
+        }
+
+        private void OnClientConnectedCallback(ulong clientID)
+        {
+            GameSessionManager._Singleton.AddPlayerToActivePlayersList(this);
+            
+            // IF WE ARE THE HOST WE DONT NEED TO SYNC OTHER PLAYERS
+            // ONLY JOINING CLIENTS HAVE TO SYNC
+            if (!IsServer && IsOwner)
+            {
+                foreach (var player in GameSessionManager._Singleton.players)
+                {
+                    if (player != this)
+                    {
+                        player.LoadOtherPlayerCharacterWhenJoiningServer();
+                    }
+                }
             }
         }
 
@@ -157,6 +178,15 @@ namespace NSG
             // STAMINA
             playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(currentCharacterData.enduranceLevel);
             PlayerUIManager._Singleton.playerUIHudManager.SetMaxStaminaValue(playerNetworkManager.maxStamina.Value);
+        }
+
+        public void LoadOtherPlayerCharacterWhenJoiningServer()
+        {
+            // SYNC WEAPONS
+            playerNetworkManager.OnCurrentLeftHandWeaponIDChange(0, playerNetworkManager.currentLeftHandWeaponID.Value);
+            playerNetworkManager.OnCurrentRightHandWeaponIDChange(0, playerNetworkManager.currentRightHandWeaponID.Value);
+
+            // ARMOR
         }
 
         public override void RevivePlayer()

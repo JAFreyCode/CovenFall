@@ -10,8 +10,6 @@ namespace NSG
         public Vector3 groundCheckSphereOffset;
         public Vector3 rayCastGroundCheckOffset;
         public float groundCheckSphereRadius = 1;
-        public float ledgeRayLength = 1f;
-        public float pullSpeed = 2.5f;
         public float gravityForce = -9.81f;
         public float groundDistance;
         [SerializeField] protected Vector3 yVelocity; // THE FORCE AT WHICH OUR CHARACTER IS PULLED UP OR DOWN
@@ -20,17 +18,6 @@ namespace NSG
         protected bool fallingVelocityHasBeenSet = false;
         protected float inAirTimer = 0;
 
-        [Header("Ledge Detection")]
-        public float ledgeCheckDistance = 0.5f;
-        public float ledgePullForce = 2.5f;
-        public float ledgePushForce = 2.5f;
-        public float ledgeAngleThreshold = 45f;
-        public float ledgeSmoothingFactor = 0.1f;
-        private Vector3[] ledgeRayDirections = new Vector3[4];
-        private RaycastHit[] ledgeHits = new RaycastHit[4];
-        private bool[] ledgeHitsFound = new bool[4];
-        private Vector3 ledgeVelocity = Vector3.zero;
-
         protected virtual void Awake()
         {
             GetReferences();
@@ -38,10 +25,7 @@ namespace NSG
 
         protected virtual void Start()
         {
-            ledgeRayDirections[0] = Vector3.forward;
-            ledgeRayDirections[1] = Vector3.right;
-            ledgeRayDirections[2] = Vector3.back;
-            ledgeRayDirections[3] = Vector3.left;
+
         }
 
         protected virtual void Update()
@@ -63,65 +47,16 @@ namespace NSG
         protected void HandleGroundCheck()
         {
             Vector3 checkOrigin = character.transform.position + groundCheckSphereOffset;
-            character.isGrounded = Physics.CheckSphere(character.transform.position + groundCheckSphereOffset, groundCheckSphereRadius, NSGUtils.GetGroundLayers().value);
 
-            if (!character.isGrounded)
+            if (!Physics.CheckSphere(character.transform.position + groundCheckSphereOffset, groundCheckSphereRadius, NSGUtils.GetGroundLayers().value))
             {
-                CheckLedges(checkOrigin);
-            }
-        }
-
-        private void CheckLedges(Vector3 origin)
-        {
-            bool foundLedge = false;
-            Vector3 ledgePullDirection = Vector3.zero;
-            float closestDistance = float.MaxValue;
-
-            for (int i = 0; i < 4; i++)
-            {
-                Vector3 rayDirection = transform.TransformDirection(ledgeRayDirections[i]);
-                ledgeHitsFound[i] = Physics.Raycast(origin, rayDirection, out ledgeHits[i], ledgeCheckDistance, NSGUtils.GetGroundLayers().value);
-
-                if (ledgeHitsFound[i])
-                {
-                    float angle = Vector3.Angle(ledgeHits[i].normal, Vector3.up);
-                    if (angle > ledgeAngleThreshold)
-                    {
-                        foundLedge = true;
-                        float distance = ledgeHits[i].distance;
-                        if (distance < closestDistance)
-                        {
-                            closestDistance = distance;
-                            ledgePullDirection = -rayDirection;
-                        }
-                    }
-                }
-
-                Debug.DrawRay(origin, rayDirection * ledgeCheckDistance, ledgeHitsFound[i] ? Color.green : Color.red);
-            }
-
-            if (foundLedge)
-            {
-                bool isMoving = Mathf.Abs(character.characterController.velocity.x) > 0.1f || 
-                               Mathf.Abs(character.characterController.velocity.z) > 0.1f;
-
-                if (!isMoving)
-                {
-                    Vector3 targetVelocity = ledgePullDirection * ledgePullForce;
-
-                    ledgeVelocity = Vector3.Lerp(ledgeVelocity, targetVelocity, ledgeSmoothingFactor);
-
-                    character.characterController.Move(ledgeVelocity * Time.deltaTime);
-                }
-                else
-                {
-                    ledgeVelocity = Vector3.zero;
-                }
+                character.isGrounded = character.characterController.isGrounded;
             }
             else
             {
-                ledgeVelocity = Vector3.zero;
+                character.isGrounded = Physics.CheckSphere(character.transform.position + groundCheckSphereOffset, groundCheckSphereRadius, NSGUtils.GetGroundLayers().value);
             }
+            
         }
 
         protected void HandleGroundRayCheck()
@@ -149,7 +84,6 @@ namespace NSG
 
                 inAirTimer = 0;
                 fallingVelocityHasBeenSet = false;
-                yVelocity.y = groundVelocity;
             }
             else
             {
@@ -204,15 +138,6 @@ namespace NSG
 
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(character.transform.position + groundCheckSphereOffset, groundCheckSphereRadius);
-
-            // Draw ledge check rays
-            Vector3 origin = character.transform.position + groundCheckSphereOffset;
-            for (int i = 0; i < 4; i++)
-            {
-                Vector3 direction = character.transform.TransformDirection(ledgeRayDirections[i]);
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawRay(origin, direction * ledgeCheckDistance);
-            }
         }
 
     }
